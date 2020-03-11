@@ -16,16 +16,25 @@ public class MeshGen : MonoBehaviour
     public float freq;
     public float amp;
 
+    Vector3 planePos;
+
+    [SerializeField]
+    bool isFlatShaded;
+
     void Awake()
     {
         mesh = GetComponent<MeshFilter>().mesh;
     }
-
-    // Start is called before the first frame update
+        
     void Start()
     {
+        planePos = this.transform.position;
+
         MakeMeshData();
-        FlatShaing();
+        if (isFlatShaded)
+        {
+            FlatShaing();
+        }                      
         CreateMesh();
     }
 
@@ -39,21 +48,20 @@ public class MeshGen : MonoBehaviour
 
         int i = 0;
 
-        for (int z = 0; z < chunkSize + 1; z++)
-        {
-            for (int x = 0; x < chunkSize + 1; x++)
-            {
-                float y = Mathf.PerlinNoise(x / freq, z / freq) * amp;
-                vertices[i] = new Vector3(x, y, z);
-                //Debug.Log("vertice " + i + ": " + vertices[i]);
+        float y = 0;
+
+        for (int z = 0; z < chunkSize + 1; z++){
+            for (int x = 0; x < chunkSize + 1; x++){
+                
+                y = Mathf.PerlinNoise((planePos.x + x) / freq, (planePos.z + z) / freq) * amp;
+                //Debug.Log("First perlin : " + y);                
+                vertices[i] = new Vector3(x, y, z);                
                 i++;
             }
         }
 
-        for (int z = 0; z < chunkSize; z++)
-        {
-            for (int x = 0; x < chunkSize; x++)
-            {
+        for (int z = 0; z < chunkSize; z++){
+            for (int x = 0; x < chunkSize; x++){
                 triangles[tris + 0] = vert + 0;
                 triangles[tris + 1] = vert + chunkSize + 1;
                 triangles[tris + 2] = vert + 1;
@@ -71,9 +79,9 @@ public class MeshGen : MonoBehaviour
     void FlatShaing()
     {
         Vector3[] flatShadedVertices = new Vector3[triangles.Length];
-        for (int i = 0; i < triangles.Length; i++)
-        {
-            flatShadedVertices[i] = vertices[triangles[i]];
+
+        for (int i = 0; i < triangles.Length; i++){            
+            flatShadedVertices[i] = vertices[triangles[i]];        
             triangles[i] = i;
         }
         vertices = flatShadedVertices;
@@ -87,5 +95,7 @@ public class MeshGen : MonoBehaviour
         mesh.triangles = triangles;
 
         mesh.RecalculateNormals();
+
+        this.gameObject.AddComponent<MeshCollider>();
     }
 }
