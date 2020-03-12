@@ -9,7 +9,9 @@ public class Movement : MonoBehaviour
     float xMove;
     float zMove;
 
-    public float speed = 6f;
+    public float walkSpeed = 4f;
+    public float runSpeed = 8f;
+    float speed;
     public float jumpSpeed = 8f;
     public float gravity = 20f;
 
@@ -22,6 +24,15 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
+        if(Input.GetKey(KeyCode.LeftShift))
+        {
+            speed = runSpeed;
+        }
+        else
+        {
+            speed = walkSpeed;
+        }
+        Debug.Log("speed : " + speed);
         xMove = Input.GetAxis("Horizontal") * speed;
         zMove = Input.GetAxis("Vertical") * speed;
 
@@ -38,10 +49,11 @@ public class Movement : MonoBehaviour
             {
                 moveDirection.y = jumpSpeed;
             }
+
         }
 
         moveDirection.y -= gravity * Time.deltaTime;
 
-        characterController.Move(moveDirection * Time.deltaTime);
+        characterController.Move(moveDirection * walkSpeed * Time.deltaTime);
     }
 }
