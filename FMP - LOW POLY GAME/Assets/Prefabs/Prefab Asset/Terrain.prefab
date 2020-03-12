@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac06f2fa2655dce41b05119441894024, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkSize: 10
+  chunkSize: 30
   freq: 6
   amp: 6
   isFlatShaded: 1

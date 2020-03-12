@@ -44,8 +44,8 @@ public class InfiniteTerrain : MonoBehaviour
     {
         int xMove = (int)(player.transform.position.x - startPos.x);
         int zMove = (int)(player.transform.position.z - startPos.z);
-
-        if (Mathf.Abs(xMove) >= chunkSize * 0.1f || Mathf.Abs(zMove) >= chunkSize * 0.1f)
+                
+        if (Mathf.Abs(xMove) >= 2 || Mathf.Abs(zMove) >= 2)
         {
             Debug.Log("Running plane update");
             UpdatePlane();
