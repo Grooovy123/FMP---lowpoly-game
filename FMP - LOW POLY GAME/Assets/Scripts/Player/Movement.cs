@@ -8,11 +8,11 @@ public class Movement : MonoBehaviour
 
     float xMove;
     float zMove;
-        
+
     public float speed = 6f;
     public float jumpSpeed = 8f;
     public float gravity = 20f;
-            
+
     private Vector3 moveDirection;
 
     void Awake()
@@ -21,18 +21,18 @@ public class Movement : MonoBehaviour
     }
 
     void Update()
-    {        
+    {
         xMove = Input.GetAxis("Horizontal") * speed;
         zMove = Input.GetAxis("Vertical") * speed;
-        
-        PlayerMovement();        
+
+        PlayerMovement();
     }
 
     void PlayerMovement()
     {
         if (characterController.isGrounded)
         {
-            moveDirection = new Vector3(xMove, 0, zMove);
+            moveDirection = transform.right * xMove + transform.forward * zMove;
 
             if (Input.GetButton("Jump"))
             {
@@ -43,5 +43,5 @@ public class Movement : MonoBehaviour
         moveDirection.y -= gravity * Time.deltaTime;
 
         characterController.Move(moveDirection * Time.deltaTime);
-    }    
+    }
 }
