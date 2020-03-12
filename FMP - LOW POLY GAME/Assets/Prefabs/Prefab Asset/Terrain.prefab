@@ -92,6 +92,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkSize: 10
-  freq: 6
-  amp: 6
+  freq: 8
+  amp: 12
   isFlatShaded: 1

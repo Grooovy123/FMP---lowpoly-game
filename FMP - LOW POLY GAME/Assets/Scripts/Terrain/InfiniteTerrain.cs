@@ -20,7 +20,7 @@ public class InfiniteTerrain : MonoBehaviour
     public GameObject player;
 
     [SerializeField]
-    int radius = 10;
+    int radius = 6;
     int chunkSize;
 
     Vector3 startPos;
@@ -28,6 +28,7 @@ public class InfiniteTerrain : MonoBehaviour
     Hashtable tiles = new Hashtable();
 
     float updateTime;
+    bool move;
 
     void Awake()
     {        
@@ -37,7 +38,7 @@ public class InfiniteTerrain : MonoBehaviour
     void Start()
     {
         PlaneGenerator();
-        Debug.Log("Plane generation complete");
+        //Debug.Log("Plane generation complete");
     }
 
     void Update()
@@ -45,15 +46,16 @@ public class InfiniteTerrain : MonoBehaviour
         int xMove = (int)(player.transform.position.x - startPos.x);
         int zMove = (int)(player.transform.position.z - startPos.z);
 
-        if (Mathf.Abs(xMove) >= chunkSize * 0.1f || Mathf.Abs(zMove) >= chunkSize * 0.1f)
+        if (Mathf.Abs(xMove) >= chunkSize * 0.25f || Mathf.Abs(zMove) >= chunkSize * 0.25f)
         {
-            Debug.Log("Running plane update");
+            //Debug.Log("Running plane update");
             UpdatePlane();
-            Debug.Log("updated plane complete");
+            move = true;
+            //Debug.Log("updated plane complete");
         }
 
         UpdateTiles();
-        Debug.Log("update tiles");
+        //Debug.Log("update tiles");
     }
 
     void UpdateTiles()
@@ -72,8 +74,12 @@ public class InfiniteTerrain : MonoBehaviour
         }
 
         tiles = newTerrain;
-
-        startPos = player.transform.position;
+        if(move)
+        {
+            startPos = player.transform.position;
+            move = false;
+        }
+        
     }
 
     void UpdatePlane()
