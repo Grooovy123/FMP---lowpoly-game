@@ -1,0 +1,35 @@
+diff a/FMP - LOW POLY GAME/Assets/Scripts/Terrain/InfiniteTerrain.cs b/FMP - LOW POLY GAME/Assets/Scripts/Terrain/InfiniteTerrain.cs	(rejected hunks)
+@@ -38,23 +38,29 @@
+     void Start()
+     {
+         PlaneGenerator();
+-        Debug.Log("Plane generation complete");
++        //Debug.Log("Plane generation complete");
+     }
+ 
+     void Update()
+     {
+         int xMove = (int)(player.transform.position.x - startPos.x);
+         int zMove = (int)(player.transform.position.z - startPos.z);
++<<<<<<< HEAD
+                 
+         if (Mathf.Abs(xMove) >= 2 || Mathf.Abs(zMove) >= 2)
++=======
++
++        if (Mathf.Abs(xMove) >= chunkSize * 0.25f || Mathf.Abs(zMove) >= chunkSize * 0.25f)
++>>>>>>> 530c53b21b259673a1fa8720bfb7c4f742bbb1d2
+         {
+-            Debug.Log("Running plane update");
++            //Debug.Log("Running plane update");
+             UpdatePlane();
+-            Debug.Log("updated plane complete");
++            move = true;
++            //Debug.Log("updated plane complete");
+         }
+ 
+         UpdateTiles();
+-        Debug.Log("update tiles");
++        //Debug.Log("update tiles");
+     }
+ 
+     void UpdateTiles()

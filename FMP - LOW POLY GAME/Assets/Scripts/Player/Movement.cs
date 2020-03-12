@@ -4,21 +4,56 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+    CharacterController characterController;
 
+    float xMove;
+    float zMove;
+
+    public float walkSpeed = 4f;
+    public float runSpeed = 8f;
+    float speed;
+    public float jumpSpeed = 8f;
+    public float gravity = 20f;
+
+    private Vector3 moveDirection;
 
     void Awake()
     {
-        
+        characterController = GetComponent<CharacterController>();
     }
 
-    void Start()
-    {
-        
-    }
-
-    
     void Update()
     {
-        
+        if(Input.GetKey(KeyCode.LeftShift))
+        {
+            speed = runSpeed;
+        }
+        else
+        {
+            speed = walkSpeed;
+        }
+        Debug.Log("speed : " + speed);
+        xMove = Input.GetAxis("Horizontal") * speed;
+        zMove = Input.GetAxis("Vertical") * speed;
+
+        PlayerMovement();
+    }
+
+    void PlayerMovement()
+    {
+        if (characterController.isGrounded)
+        {
+            moveDirection = transform.right * xMove + transform.forward * zMove;
+
+            if (Input.GetButton("Jump"))
+            {
+                moveDirection.y = jumpSpeed;
+            }
+
+        }
+
+        moveDirection.y -= gravity * Time.deltaTime;
+
+        characterController.Move(moveDirection * walkSpeed * Time.deltaTime);
     }
 }
