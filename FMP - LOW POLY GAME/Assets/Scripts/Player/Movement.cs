@@ -32,7 +32,7 @@ public class Movement : MonoBehaviour
         {
             speed = walkSpeed;
         }
-        Debug.Log("speed : " + speed);
+        //Debug.Log("speed : " + speed);
         xMove = Input.GetAxis("Horizontal") * speed;
         zMove = Input.GetAxis("Vertical") * speed;
 

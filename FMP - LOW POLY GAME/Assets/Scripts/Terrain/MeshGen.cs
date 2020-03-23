@@ -54,7 +54,7 @@ public class MeshGen : MonoBehaviour
             for (int x = 0; x < chunkSize + 1; x++){
                 
                 y = Mathf.PerlinNoise((planePos.x + x) / freq, (planePos.z + z) / freq) * amp;
-                //y += Mathf.PerlinNoise((planePos.x + x) * freq * 0.5f, (planePos.z + z) * freq * 0.5f) * amp * 0.5f;
+
                 vertices[i] = new Vector3(x, y, z);                
                 i++;
             }
