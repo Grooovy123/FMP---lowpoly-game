@@ -8,6 +8,7 @@ public class BlockGen : MonoBehaviour
     public enum BlockType { GRASS, DIRT, STONE, PURPLE_WOOL};
 
     BlockType btype;
+    public bool isSolid;
     GameObject parent;
     Vector3 position;
     Material cubeMaterial;    
@@ -22,12 +23,13 @@ public class BlockGen : MonoBehaviour
 
     };
 
-    public BlockGen (BlockType b, Vector3 pos, GameObject p, Material c)
+    public BlockGen(BlockType b, Vector3 pos, GameObject p, Material c)
     {
-        btype = b;
+        btype = b;        
         parent = p;
         position = pos;
         cubeMaterial = c;
+        isSolid = true;
     }
 
     void CreateQuad(Cubeside side)
@@ -132,13 +134,31 @@ public class BlockGen : MonoBehaviour
         renderer.material = cubeMaterial;
     }     
 
+    public bool HasSolidNeighbour(int x, int y, int z)
+    {
+        BlockGen[,,] chunks = parent.GetComponent<WorldManager>().chunkData;
+        try
+        {
+            return chunks[x, y, z].isSolid;
+        }
+        catch (System.IndexOutOfRangeException ex) { }
+
+        return false;
+    }
+
     public void Draw()
     {
-        CreateQuad(Cubeside.FRONT);
-        CreateQuad(Cubeside.BACK);
-        CreateQuad(Cubeside.TOP);
-        CreateQuad(Cubeside.BOTTOM);
-        CreateQuad(Cubeside.LEFT);
-        CreateQuad(Cubeside.RIGHT);        
+        if (!HasSolidNeighbour((int)position.x, (int)position.y, (int)position.z + 1))
+            CreateQuad(Cubeside.FRONT);
+        if (!HasSolidNeighbour((int)position.x, (int)position.y, (int)position.z - 1))
+            CreateQuad(Cubeside.BACK);
+        if (!HasSolidNeighbour((int)position.x, (int)position.y + 1, (int)position.z))
+            CreateQuad(Cubeside.TOP);
+        if (!HasSolidNeighbour((int)position.x, (int)position.y - 1, (int)position.z))
+            CreateQuad(Cubeside.BOTTOM);
+        if (!HasSolidNeighbour((int)position.x - 1, (int)position.y, (int)position.z))
+            CreateQuad(Cubeside.LEFT);
+        if (!HasSolidNeighbour((int)position.x + 1, (int)position.y, (int)position.z))
+            CreateQuad(Cubeside.RIGHT);
     }
 }

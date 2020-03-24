@@ -11,6 +11,8 @@ public class WorldManager : MonoBehaviour
     [SerializeField]
     private int height;
 
+    public BlockGen[,,] chunkData;
+
     void Start()
     {
         StartCoroutine(GenerateChunk(chunkSize, height));
@@ -18,18 +20,28 @@ public class WorldManager : MonoBehaviour
 
     IEnumerator GenerateChunk(int chunkSize, int height)
     {
-        for (int y = height; y > 0; y--)
-        {
-            for (int z = 0; z < chunkSize; z++) 
-            {
+        chunkData = new BlockGen[chunkSize, height, chunkSize];
+
+        //Create blocks
+        for (int z = 0; z < chunkSize; z++){
+            for (int y = 0; y < height; y++) {
                 for (int x = 0; x < chunkSize; x++)
                 {
                     Vector3 pos = new Vector3(x, y, z);
-                    BlockGen b = new BlockGen(BlockGen.BlockType.DIRT, pos, this.gameObject, cubeMaterial);
-
-                    b.Draw();
-                    yield return null;
+                    chunkData[x, y, z] = new BlockGen(BlockGen.BlockType.DIRT, pos,
+                                         this.gameObject, cubeMaterial);
                 }
+            }
+        }
+
+        //Draw blocks
+        for (int z = 0; z < chunkSize; z++){
+            for (int y = 0; y < height; y++){
+                for (int x = 0; x < chunkSize; x++)
+                {
+                    chunkData[x, y, z].Draw();
+                    yield return null;
+                }                
             }
         }
         CombineQuads();
