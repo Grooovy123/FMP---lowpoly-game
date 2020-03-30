@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BlockGen : MonoBehaviour
+public class BlockGen
 {    
     enum Cubeside { BOTTOM, TOP, LEFT, RIGHT, FRONT, BACK};
-    public enum BlockType { GRASS, DIRT, STONE, PURPLE_WOOL};
+    public enum BlockType { GRASS, DIRT, AIR};
 
     BlockType btype;
     public bool isSolid;
+    ChunkLoader owner;
     GameObject parent;
     Vector3 position;
     Material cubeMaterial;    
@@ -23,19 +24,25 @@ public class BlockGen : MonoBehaviour
 
     };
 
-    public BlockGen(BlockType b, Vector3 pos, GameObject p, Material c)
+    public BlockGen(BlockType b, Vector3 pos, GameObject p, ChunkLoader o)
     {
-        btype = b;        
+        btype = b;  
+        owner = o;      
         parent = p;
-        position = pos;
-        cubeMaterial = c;
-        isSolid = true;
+        position = pos;        
+        if (btype == BlockType.AIR)
+        {
+            isSolid = false;
+        }else
+        {
+            isSolid = true;
+        }        
     }
 
     void CreateQuad(Cubeside side)
     {
         Mesh mesh = new Mesh();
-        mesh.name = "ScriptedMesh";
+        mesh.name = ($"ScriptedMesh {side.ToString()}");
 
         Vector3[] vertices = new Vector3[4];
         Vector3[] normals = new Vector3[4];
@@ -130,24 +137,61 @@ public class BlockGen : MonoBehaviour
         MeshFilter meshFilter = quad.AddComponent<MeshFilter>();
         meshFilter.mesh = mesh;
 
-        MeshRenderer renderer = quad.AddComponent<MeshRenderer>();        
-        renderer.material = cubeMaterial;
     }     
+
+    int ConvertBlockIndexToLocal(int i)
+    {
+        if(i == -1)
+            i = WorldManager.chunkSize-1;
+        else if (i == WorldManager.chunkSize)
+            i = 0;        
+        return i;
+    }   
 
     public bool HasSolidNeighbour(int x, int y, int z)
     {
-        BlockGen[,,] chunks = parent.GetComponent<WorldManager>().chunkData;
-        try
-        {
-            return chunks[x, y, z].isSolid;
-        }
-        catch (System.IndexOutOfRangeException ex) { }
+        BlockGen[,,] chunks;
 
-        return false;
+		if(x < 0 || x >= WorldManager.chunkSize || 
+		   y < 0 || y >= WorldManager.chunkSize ||
+		   z < 0 || z >= WorldManager.chunkSize)
+		{  //block in a neighbouring chunk
+			
+			Vector3 neighbourChunkPos = this.parent.transform.position + 
+										new Vector3((x - (int)position.x)*WorldManager.chunkSize, 
+											(y - (int)position.y)*WorldManager.chunkSize, 
+											(z - (int)position.z)*WorldManager.chunkSize);
+			string nName = WorldManager.BuildChunkName(neighbourChunkPos);
+
+			x = ConvertBlockIndexToLocal(x);
+			y = ConvertBlockIndexToLocal(y);
+			z = ConvertBlockIndexToLocal(z);
+			
+			ChunkLoader nChunk;
+			if(WorldManager.chunks.TryGetValue(nName, out nChunk))
+			{
+				chunks = nChunk.chunkData;
+			}
+			else
+				return false;
+		}  //block in this chunk
+		else
+			chunks = owner.chunkData;
+		
+		try
+		{
+            //Debug.Log($"{chunks[x,y,z].isSolid}");
+			return chunks[x,y,z].isSolid;
+		}
+		catch(System.IndexOutOfRangeException){}
+
+		return false;
     }
 
     public void Draw()
     {
+        if (btype == BlockType.AIR) return;
+
         if (!HasSolidNeighbour((int)position.x, (int)position.y, (int)position.z + 1))
             CreateQuad(Cubeside.FRONT);
         if (!HasSolidNeighbour((int)position.x, (int)position.y, (int)position.z - 1))

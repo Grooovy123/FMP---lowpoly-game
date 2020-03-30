@@ -4,75 +4,37 @@ using UnityEngine;
 
 public class WorldManager : MonoBehaviour
 {
-    public Material cubeMaterial;
+    public Material TextureTile;
+    public static int columnHeight = 4;
+    public static int chunkSize = 16;
+    public static Dictionary<string, ChunkLoader> chunks;
 
-    [SerializeField]
-    private int chunkSize;
-    [SerializeField]
-    private int height;
-
-    public BlockGen[,,] chunkData;
-
-    void Start()
-    {
-        StartCoroutine(GenerateChunk(chunkSize, height));
+    public void Start(){        
+        chunks = new Dictionary<string, ChunkLoader>();
+        this.transform.position = Vector3.zero;
+        this.transform.rotation = Quaternion.identity;        
+        StartCoroutine(BuildChunk());
     }
 
-    IEnumerator GenerateChunk(int chunkSize, int height)
-    {
-        chunkData = new BlockGen[chunkSize, height, chunkSize];
-
-        //Create blocks
-        for (int z = 0; z < chunkSize; z++){
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < chunkSize; x++)
-                {
-                    Vector3 pos = new Vector3(x, y, z);
-                    chunkData[x, y, z] = new BlockGen(BlockGen.BlockType.DIRT, pos,
-                                         this.gameObject, cubeMaterial);
-                }
-            }
-        }
-
-        //Draw blocks
-        for (int z = 0; z < chunkSize; z++){
-            for (int y = 0; y < height; y++){
-                for (int x = 0; x < chunkSize; x++)
-                {
-                    chunkData[x, y, z].Draw();
-                    yield return null;
-                }                
-            }
-        }
-        CombineQuads();
+    public static string BuildChunkName(Vector3 v){
+        return ($"{(int)v.x}_{(int)v.y}_{(int)v.z}");
     }
 
-    void CombineQuads()
-    {
-        //Combine all children meshes
-        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
-        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
-        for (int i = 0; i < meshFilters.Length; i++)
+    IEnumerator BuildChunk(){
+        for (int i = 0; i < columnHeight; i++)
         {
-            combine[i].mesh = meshFilters[i].sharedMesh;
-            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            Vector3 chunkPositon = new Vector3(this.transform.position.x,
+                                 i*columnHeight, this.transform.position.z);
+
+            ChunkLoader c = new ChunkLoader(chunkPositon, TextureTile);
+            c.chunk.transform.parent = this.transform;
+            chunks.Add(c.chunk.name, c);
         }
 
-        //Create a new mesh on parent object
-        MeshFilter mf = this.gameObject.AddComponent<MeshFilter>();
-        mf.mesh = new Mesh();
-
-        //Add combined meshes on children as the parent' mesh
-        mf.mesh.CombineMeshes(combine);
-
-        ////Create a renderer for the parent
-        MeshRenderer renderer = this.gameObject.AddComponent<MeshRenderer>();
-        renderer.material = cubeMaterial;
-
-        //Delete all uncombined children
-        foreach (Transform quad in this.transform)
+        foreach(KeyValuePair<string, ChunkLoader> c in chunks)
         {
-            Destroy(quad.gameObject);
+           c.Value.DrawChunk();           
+           yield return null; 
         }
     }
 }

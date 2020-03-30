@@ -221,6 +221,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1464386110}
   - component: {fileID: 1464386109}
+  - component: {fileID: 1464386111}
   m_Layer: 0
   m_Name: World manager
   m_TagString: Untagged
@@ -235,14 +236,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1464386108}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3164b38d570be9c4ea7f83d2e1fea470, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubeMaterial: {fileID: 2100000, guid: d40688f7b9bd7a748974318c1260a1b0, type: 2}
-  chunkSize: 4
-  height: 4
+  TextureTile: {fileID: 2100000, guid: d40688f7b9bd7a748974318c1260a1b0, type: 2}
 --- !u!4 &1464386110
 Transform:
   m_ObjectHideFlags: 0
@@ -257,6 +256,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1464386111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464386108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 205c41e4e06c84c449f559da5c177786, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textureAtlas: {fileID: 2100000, guid: 13bca8c4ee18e8041b69122c631a3cba, type: 2}
 --- !u!1 &1920461554
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,7 +377,7 @@ PrefabInstance:
     - target: {fileID: 6610960367580023894, guid: 332409bd87be85a4f87ca45b2d9ba34a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6610960367580023894, guid: 332409bd87be85a4f87ca45b2d9ba34a,
         type: 3}
@@ -375,7 +387,7 @@ PrefabInstance:
     - target: {fileID: 6610960367580023894, guid: 332409bd87be85a4f87ca45b2d9ba34a,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6610960367580023894, guid: 332409bd87be85a4f87ca45b2d9ba34a,
         type: 3}
@@ -420,7 +432,27 @@ PrefabInstance:
     - target: {fileID: 6610960367580023895, guid: 332409bd87be85a4f87ca45b2d9ba34a,
         type: 3}
       propertyPath: gravity
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6610960367580023895, guid: 332409bd87be85a4f87ca45b2d9ba34a,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6610960367580023895, guid: 332409bd87be85a4f87ca45b2d9ba34a,
+        type: 3}
+      propertyPath: jumpSpeed
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6610960367580023895, guid: 332409bd87be85a4f87ca45b2d9ba34a,
+        type: 3}
+      propertyPath: walkSpeed
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6610960367580023895, guid: 332409bd87be85a4f87ca45b2d9ba34a,
+        type: 3}
+      propertyPath: runSpeed
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6610960368357914985, guid: 332409bd87be85a4f87ca45b2d9ba34a,
         type: 3}
