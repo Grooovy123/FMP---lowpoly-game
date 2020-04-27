@@ -7,7 +7,7 @@ public class Look : MonoBehaviour
     float mouseX;
     float mouseY;
 
-    public float mouseSens = 5f;
+    public float mouseSens = 10f;
     float xRotation;
 
     [SerializeField]

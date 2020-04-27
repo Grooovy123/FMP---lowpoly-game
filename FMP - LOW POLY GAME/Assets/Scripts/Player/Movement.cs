@@ -16,12 +16,13 @@ public class Movement : MonoBehaviour
     public float gravity = 20f;
 
     private Vector3 moveDirection;
+    
 
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
     }
-
+            
     void Update()
     {
         if(Input.GetKey(KeyCode.LeftShift))
@@ -40,19 +41,18 @@ public class Movement : MonoBehaviour
     }
 
     void PlayerMovement()
-    {
+    {        
+        moveDirection = transform.right * xMove + transform.forward * zMove;
+        
         if (characterController.isGrounded)
         {
-            moveDirection = transform.right * xMove + transform.forward * zMove;
-
             if (Input.GetButton("Jump"))
             {
                 moveDirection.y = jumpSpeed;
             }
-
         }
 
-        moveDirection.y -= gravity * Time.deltaTime;
+        moveDirection.y -= gravity * 10 * Time.deltaTime;
 
         characterController.Move(moveDirection * walkSpeed * Time.deltaTime);
     }
