@@ -4,20 +4,25 @@ using UnityEngine;
 
 public class Utils {
 
-	static int maxHeight = 150;
+	static int maxHeight = 120;
 	static float smooth = 0.01f;
-	static int octaves = 6;
+	static int octaves = 4;
 	static float persistence = 0.5f;
+    
+    class seedGen
+    {
+        public static int seed = Random.Range(-100000, 100000);
+    }
 
 	public static int GenerateStoneHeight(float x, float z)
 	{
-		float height = Map(0,maxHeight-5, 0, 1, fBM(x*smooth,z*smooth,octaves+1,persistence));
+		float height = Map(0,maxHeight-5, 0, 1, fBM(x*smooth, z*smooth, octaves+1,persistence));
 		return (int) height;
 	}
 
 	public static int GenerateHeight(float x, float z)
 	{
-		float height = Map(0,maxHeight, 0, 1, fBM(x*smooth/2,z*smooth/2,octaves,persistence));
+		float height = Map(0,maxHeight, 0, 1, fBM(x*smooth * 0.3f, z*smooth * 0.3f, octaves,persistence));
 		return (int) height;
 	}
 
@@ -40,12 +45,12 @@ public class Utils {
     }
 
     static float fBM(float x, float z, int oct, float pers)
-    {
+    {        
         float total = 0;
         float frequency = 1;
         float amplitude = 1;
         float maxValue = 0;
-        float offset = 32000f;
+        float offset = seedGen.seed;
         for(int i = 0; i < oct ; i++) 
         {
                 total += Mathf.PerlinNoise((x+offset) * frequency, (z+offset) * frequency) * amplitude;
