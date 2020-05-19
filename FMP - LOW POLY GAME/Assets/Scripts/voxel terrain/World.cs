@@ -6,16 +6,43 @@ using UnityEngine.UI;
 public class World : MonoBehaviour {
 
 	public GameObject player;
+
+    public GameObject[] vegitation;
+    public GameObject[] trees;
+
 	public Material textureAtlas;
-	public static int columnHeight = 10;
+
+	public static int columnHeight = 7;
 	public static int chunkSize = 16;	
 	public static int radius = 6;
+
 	public static Dictionary<string, Chunk> chunks;
+
     public Slider loadingAmount;
     public Camera cam;
     public Canvas canvas;
 
-	public static string BuildChunkName(Vector3 v)
+    public static GameObject[] grassTypes;    
+    private static GameObject grass;
+
+    public static GameObject[] treeTypes;
+    private static GameObject tree;       
+
+    public static void GenerateGrass(float x, float y, float z)
+    {
+        x = Random.Range(x - 0.5f, x + 0.5f);        
+        z = Random.Range(z - 0.5f, z + 0.5f);
+
+        grass = Instantiate(grassTypes[Random.Range(0, grassTypes.Length)], new Vector3(x, y + 0.5f, z), Quaternion.identity);
+    }
+
+    public static void GenerateTree(float x, float y, float z)
+    {
+        tree = Instantiate(treeTypes[Random.Range(0, treeTypes.Length)], new Vector3(x, y, z), Quaternion.identity);
+        tree.AddComponent<MeshCollider>();             
+    }
+
+    public static string BuildChunkName(Vector3 v)
 	{
 		return (int)v.x + "_" + 
 			         (int)v.y + "_" + 
@@ -41,7 +68,8 @@ public class World : MonoBehaviour {
 		}		
 	}
 
-	IEnumerator BuildWorld()
+	//IEnumerator BuildWorld()
+    void BuildWorld()
 	{
         float startTime = Time.realtimeSinceStartup;
         int posx = (int)Mathf.Floor(player.transform.position.x/chunkSize);
@@ -64,7 +92,7 @@ public class World : MonoBehaviour {
                     processCount++;
                     loadingAmount.value = processCount / totalChunks;
 
-					yield return null;					
+					//yield return null;					
 				}
 
 		foreach(KeyValuePair<string, Chunk> c in chunks)
@@ -72,13 +100,15 @@ public class World : MonoBehaviour {
 			c.Value.DrawChunk();
             processCount++;
             loadingAmount.value = processCount / totalChunks;
-            yield return null;
+            
+            //yield return null;
 		}
+
         player.SetActive(true);
 
         cam.gameObject.SetActive(false);
         canvas.gameObject.SetActive(false);
-        
+
         Debug.Log($"Time took to generate world was {Time.realtimeSinceStartup - startTime} seconds");
     }
 
@@ -88,12 +118,12 @@ public class World : MonoBehaviour {
 		chunks = new Dictionary<string, Chunk>();
 		this.transform.position = Vector3.zero;
 		this.transform.rotation = Quaternion.identity;
-        
-		StartCoroutine(BuildWorld());        
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+        grassTypes = vegitation;
+        treeTypes = trees;        
+
+        Random rnd = new Random();
+        //StartCoroutine(BuildWorld());    
+        BuildWorld();
+	}	
 }

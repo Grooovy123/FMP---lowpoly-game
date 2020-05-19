@@ -16,13 +16,13 @@ public class Utils {
 
 	public static int GenerateStoneHeight(float x, float z)
 	{
-		float height = Map(0,maxHeight-5, 0, 1, fBM(x*smooth, z*smooth, octaves+1,persistence));
+		float height = Map(0,maxHeight, 0, 1, fBM(x*smooth * 0.8f, z*smooth * 0.8f, octaves+2, persistence* 0.5f));
 		return (int) height;
 	}
 
 	public static int GenerateHeight(float x, float z)
 	{
-		float height = Map(0,maxHeight, 0, 1, fBM(x*smooth * 0.3f, z*smooth * 0.3f, octaves,persistence));
+		float height = Map(0,maxHeight, 0, 1, fBM(x*smooth * 0.3f, z*smooth * 0.3f, octaves, persistence));
 		return (int) height;
 	}
 
@@ -44,23 +44,36 @@ public class Utils {
         return Mathf.Lerp (newmin, newmax, Mathf.InverseLerp (origmin, origmax, value));
     }
 
-    static float fBM(float x, float z, int oct, float pers)
-    {        
+    public static float fBM(float x, float z, int oct, float pers)
+    {
         float total = 0;
         float frequency = 1;
         float amplitude = 1;
         float maxValue = 0;
         float offset = seedGen.seed;
-        for(int i = 0; i < oct ; i++) 
+        for (int i = 0; i < oct; i++)
         {
-                total += Mathf.PerlinNoise((x+offset) * frequency, (z+offset) * frequency) * amplitude;
+            total += Mathf.PerlinNoise((x + offset) * frequency, (z + offset) * frequency) * amplitude;
 
-                maxValue += amplitude;
+            maxValue += amplitude;
 
-                amplitude *= pers;
-                frequency *= 2;
+            amplitude *= pers;
+            frequency *= 2;
         }
 
-        return total/maxValue;
+        return total / maxValue;
     }
+
+    public float fBMForGrass(float x, float z)
+    {
+        float total = 0;
+        float frequency = 0.3f;
+        float amplitude = 1f;        
+        float offset = seedGen.seed;
+        
+        total = Mathf.PerlinNoise((x + offset) * frequency, (z + offset) * frequency) * amplitude;
+        
+        return total ;
+    }
+
 }

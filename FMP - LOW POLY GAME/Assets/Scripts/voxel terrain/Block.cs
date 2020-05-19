@@ -189,7 +189,9 @@ public class Block {
 		{
 			return chunks[x,y,z].isSolid;
 		}
-		catch(System.IndexOutOfRangeException){}
+		catch(System.IndexOutOfRangeException e){
+            Debug.Log($"Error h1 {e}");                
+        }
 
 		return false;
 	}

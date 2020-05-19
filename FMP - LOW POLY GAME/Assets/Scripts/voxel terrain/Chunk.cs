@@ -6,9 +6,11 @@ public class Chunk {
 
 	public Material cubeMaterial;
 	public Block[,,] chunkData;
-	public GameObject chunk;
+	public GameObject chunk;    
 	public enum ChunkStatus {DRAW,DONE,KEEP};
 	public ChunkStatus status;
+
+    int grass = 0;       
 
 	void BuildChunk()
 	{
@@ -24,15 +26,38 @@ public class Chunk {
 					int worldZ = (int)(z + chunk.transform.position.z);
 
 
-                    if (Utils.fBM3D(worldX, worldY, worldZ, 0.05f, 2) < 0.4f)
+                    if (Utils.fBM3D(worldX, worldY, worldZ, 0.05f, 2) < 0.38f)
                         chunkData[x, y, z] = new Block(Block.BlockType.AIR, pos,
                                         chunk.gameObject, this);
+
+                    //else if (worldY <= Utils.GenerateStoneHeight(worldX, worldZ))                        
+                    //    chunkData[x, y, z] = new Block(Block.BlockType.STONE, pos,
+                    //                            chunk.gameObject, this);
+                        
                     //else if (worldY + 18 < Utils.GenerateHeight(worldX, worldZ))
                     //    chunkData[x, y, z] = new Block(Block.BlockType.AIR, pos,
                     //                        chunk.gameObject, this);
                     else if (worldY == Utils.GenerateHeight(worldX,worldZ))
-						chunkData[x,y,z] = new Block(Block.BlockType.GRASS, pos, 
-						                chunk.gameObject, this);
+                    {
+                        chunkData[x, y, z] = new Block(Block.BlockType.GRASS, pos,
+                                        chunk.gameObject, this);
+
+                        Utils utils = new Utils();
+                        if (utils.fBMForGrass(worldX, worldZ) < 0.33f)
+                        {
+                            if (grass <= 20)
+                            {
+                                grass++;
+                                World.GenerateGrass(worldX, worldY, worldZ);                                
+                            }
+                            else
+                            {
+                                grass = 0;
+                                World.GenerateTree(worldX, worldY, worldZ);
+                            }
+                        }
+                    }
+						
                     else if (worldY+8 < Utils.GenerateHeight(worldX, worldZ))
                         chunkData[x, y, z] = new Block(Block.BlockType.STONE, pos,
                                         chunk.gameObject, this);
@@ -56,7 +81,15 @@ public class Chunk {
 			for(int y = 0; y < World.chunkSize; y++)
 				for(int x = 0; x < World.chunkSize; x++)
 				{
-					chunkData[x,y,z].Draw();	
+                    try
+                    {
+                        chunkData[x, y, z].Draw();
+                    }
+                    catch (System.Exception e )
+                    {
+                        Debug.Log($"Error z1 {e}");                        
+                    }
+						
 				}
 		CombineQuads();
 		MeshCollider collider = chunk.gameObject.AddComponent(typeof(MeshCollider)) as MeshCollider;
